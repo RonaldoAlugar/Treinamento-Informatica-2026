@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulado de Informática - Banca Avança SP</title>
+    
+    <!-- PWA & Meta Tags para Atalhos no Celular e PC -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="InfoAvançaSP">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2232/2232688.png">
+
+    <!-- Fonte Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #0f172a, #1e1b4b); margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; }
+        .app-container { width: 100%; max-width: 750px; background: white; padding: 28px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); text-align: center; position: relative; overflow: hidden; }
+        
+        /* Botões Estilizados Estilo Duolingo (3D & Tátil) */
+        .btn { background-color: #4f46e5; color: white; border: none; padding: 14px 20px; font-size: 14px; font-family: 'Poppins', sans-serif; border-radius: 16px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: 700; box-shadow: 0 5px 0 #3730a3; transition: all 0.15s ease; letter-spacing: 0.5px; }
+        .btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+        .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #3730a3; }
+        .btn-success { background-color: #10b981; box-shadow: 0 5px 0 #059669; }
+        .btn-warning { background-color: #f59e0b; box-shadow: 0 5px 0 #d97706; }
+        .btn-danger { background-color: #ef4444; box-shadow: 0 5px 0 #dc2626; }
+        .btn-secondary { background-color: #64748b; box-shadow: 0 5px 0 #475569; }
+        .btn-oficial { background-color: #0284c7; box-shadow: 0 5px 0 #0369a1; }
+        .btn-premium { background-color: #8b5cf6; box-shadow: 0 5px 0 #7c3aed; }
+        .btn-motivacional { background: linear-gradient(135deg, #ec4899, #be185d); box-shadow: 0 5px 0 #9d174d; }
+        .btn:disabled { background-color: #e2e8f0; box-shadow: 0 4px 0 #cbd5e1; color: #94a3b8; cursor: not-allowed; transform: none !important; }
+        
+        .nav-buttons { display: flex; gap: 12px; margin-top: 15px; }
+
+        /* Opções e Cards Interativos com Profundidade 3D */
+        .option { background: #fff; border: 2.5px solid #e2e8f0; padding: 14px 16px; margin: 10px 0; border-radius: 16px; cursor: pointer; text-align: left; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); font-size: 13.5px; font-weight: 500; line-height: 1.5; position: relative; box-shadow: 0 4px 0 #e2e8f0; }
+        .option:hover { background: #f8fafc; border-color: #818cf8; transform: translateY(-2px); box-shadow: 0 6px 0 #cbd5e1; }
+        .option:active { transform: translateY(2px); box-shadow: 0 1px 0 #cbd5e1; }
+        .option.selected { background: #e0e7ff !important; border-color: #4f46e5 !important; color: #312e81; font-weight: 700; box-shadow: 0 4px 0 #4f46e5; }
+        
+        .hidden { display: none !important; }
+        .stats { font-size: 13px; color: #64748b; margin-bottom: 12px; font-weight: 600; }
+        .timer-badge { display: inline-block; background: #fef3c7; color: #b45309; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 12px; margin-bottom: 8px; border: 1px solid #fde68a; }
+
+        .tag-assunto { display: inline-block; background: #e0e7ff; color: #3730a3; padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px; }
+        #quest-enunciado { font-size: 14.5px; text-align: left; margin-bottom: 15px; font-weight: 600; color: #0f172a; line-height: 1.6; white-space: pre-line; background: #f8fafc; padding: 16px; border-radius: 16px; border-left: 6px solid #4f46e5; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        
+        .input-field { width: 100%; padding: 14px; margin: 10px 0; border: 2.5px solid #e2e8f0; border-radius: 16px; font-family: 'Poppins', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; font-weight: 600; }
+        .input-field:focus { border-color: #4f46e5; }
+        
+        /* Barra de Progresso Animada em Tempo Real */
+        .progress-container { width: 100%; background-color: #e2e8f0; height: 12px; border-radius: 8px; margin-bottom: 18px; overflow: hidden; position: relative; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #34d399); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 8px; }
+        
+        .toggle-btn { background-color: #f1f5f9; color: #334155; box-shadow: 0 4px 0 #cbd5e1; margin-top: 8px; font-size: 12px; padding: 10px; }
+        
+        /* Painéis e Correção Comentada */
+        .stat-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 12px; margin-bottom: 8px; text-align: left; font-size: 12px; }
+        .correcao-card { background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 14px; text-align: left; margin-bottom: 12px; font-size: 12.5px; line-height: 1.5; }
+        .badge-rank { display: inline-block; padding: 8px 18px; border-radius: 20px; font-weight: 800; color: white; margin: 10px 0; font-size: 13.5px; letter-spacing: 0.5px; }
+        .grid-modulos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+        .section-title { font-weight: 700; font-size: 13px; margin-top: 18px; margin-bottom: 6px; color: #1e293b; text-align: left; }
+
+        /* Caixas de Mensagens Motivacionais */
+        .motivation-box {
+            text-align: left;
+            background: #fdf2f8;
+            border: 2px solid #fbcfe8;
+            padding: 20px;
+            border-radius: 18px;
+            margin-top: 15px;
+            line-height: 1.7;
+            font-size: 13.5px;
+            color: #831843;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .motivation-quote {
+            background: #ffffff;
+            border-left: 4px solid #ec4899;
+            padding: 12px 16px;
+            margin: 12px 0;
+            border-radius: 8px;
+            font-style: italic;
+            font-weight: 600;
+            color: #9d174d;
+        }
+
+        /* Keyframes de Animações Interativas */
+        @keyframes pop {
+            0% { transform: scale(0.98); }
+            50% { transform: scale(1.015); }
+            100% { transform: scale(1); }
+        }
+        .pop-anim { animation: pop 0.25s ease-out; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .shake-anim { animation: shake 0.35s ease-in-out; }
+    </style>
+</head>
+<body>
+
+<div class="app-container" id="app">
+
+    <!-- TELA 1: Tela Inicial -->
+    <div id="screen-home">
+        <h2 style="color: #0f172a; margin-bottom: 2px; font-weight: 800; font-size: 24px;">Simulado de Informática</h2>
+        <p class="stats" id="total-questoes-badge">Questões Comentadas estilo Banca Avança SP (80 Questões)</p>
+        
+        <!-- Entrada de CPF com Máscara e Validação -->
+        <input type="text" id="candidato-cpf" class="input-field" placeholder="Digite seu CPF (apenas números)..." maxlength="14" oninput="mascaraCPF(this)">
+
+        <div style="display: flex; gap: 10px;">
+            <button class="btn toggle-btn" id="btn-timer-toggle" onclick="alternarCronometro()">⏱️ Cronômetro: ATIVADO</button>
+            <button class="btn toggle-btn" id="btn-sound" onclick="alternarSom()">🔊 Som: ATIVADO</button>
+        </div>
+
+        <!-- BOTÃO MOTIVACIONAL INICIAL -->
+        <button class="btn btn-motivacional" onclick="abrirMotivacionalInicio()" style="margin-top: 14px; font-size: 14px;">💡 Mensagem Inspiradora Inicial</button>
+
+        <div class="section-title">📌 Blocos Temáticos de Estudo:</div>
+        <div class="grid-modulos">
+            <button class="btn btn-success" onclick="iniciarModulo(1)">Bloco 1: MS Excel (Parte 1)</button>
+            <button class="btn btn-success" onclick="iniciarModulo(2)">Bloco 2: MS Excel & Word</button>
+            <button class="btn btn-success" onclick="iniciarModulo(3)">Bloco 3: MS Word & Windows</button>
+            <button class="btn btn-success" onclick="iniciarModulo(4)">Bloco 4: Windows & Web</button>
+            <button class="btn btn-success" onclick="iniciarModulo(5)" style="grid-column: span 2;">Bloco 5: Segurança & E-mail</button>
+        </div>
+
+        <div class="section-title">🏛️ Provas Oficiais Reais (Avança SP - 2025):</div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+            <button class="btn btn-oficial" onclick="iniciarModulo('oficial1')">📄 01. Prova Oficial Avança SP - 2025 Câmara Vinhedo (Q16 a Q20)</button>
+            <button class="btn btn-oficial" onclick="iniciarModulo('oficial2')">📄 02. Prova Oficial Avança SP - 2025 Prefeitura Vinhedo (Q31 a Q40)</button>
+            <button class="btn btn-oficial" onclick="iniciarModulo('oficial3')">📄 03. Prova Oficial Avança SP - 2025 Potim/SP (Q16 a Q20)</button>
+        </div>
+
+        <button class="btn btn-premium" onclick="iniciarModulo('completo')" style="margin-top: 18px; font-size: 15px;">🚀 SIMULADO COMPLETO (TODAS AS 80 QUESTÕES)</button>
+    </div>
+
+    <!-- TELA MOTIVACIONAL INICIAL -->
+    <div id="screen-motivation-start" class="hidden">
+        <span class="tag-assunto" style="background: #fbcfe8; color: #9d174d;">💡 MENSAGEM DE INCENTIVO INICIAL</span>
+        <h2 style="color: #831843; font-size: 20px; margin-top: 5px;">Você É Capaz de Dominar a Informática!</h2>
+        
+        <div class="motivation-box">
+            <p><strong>Muitos candidatos acreditam que nunca vão aprender Informática.</strong> Talvez você até tenha pensado isso em algum momento. Mas a verdade é que ninguém nasce sabendo conceitos de sistemas operacionais, atalhos de teclado, segurança da informação ou pacotes de escritório. Todo conhecimento é construído com dedicação, prática e constância.</p>
+            
+            <div class="motivation-quote">
+                "Não deixe que uma disciplina determine o tamanho do seu sonho. A Informática não é um dom; é uma habilidade que pode ser desenvolvida. Cada questão que você resolve, cada erro que você corrige e cada revisão que você faz representam um passo a mais em direção à sua aprovação."
+            </div>
+
+            <p>Lembre-se de que milhares de pessoas que hoje ocupam um cargo público também sentiram insegurança, erraram muitas questões e pensaram em desistir. A diferença é que elas continuaram estudando quando parecia mais difícil.</p>
+            
+            <p style="margin-top: 10px;">Se hoje você ainda não domina Informática, isso não significa que nunca dominará. Significa apenas que está em processo de aprendizagem. E quem continua aprendendo continua evoluindo.</p>
+
+            <div class="motivation-quote">
+                "Sua aprovação começa muito antes do resultado final. Ela começa na decisão de abrir o material mais uma vez, responder mais uma questão e seguir em frente, mesmo quando o caminho parece difícil."
+            </div>
+
+            <p style="margin-top: 10px; font-weight: 700; text-align: center; color: #9d174d;">
+                Continue. A vaga que você tanto deseja pode estar mais perto do que imagina!
+            </p>
+        </div>
+
+        <button class="btn btn-motivacional" onclick="voltarHome()" style="margin-top: 16px;">✨ VOLTAR AO MENU E COMEÇAR OS ESTUDOS</button>
+    </div>
+
+    <!-- TELA 2: Quiz -->
+    <div id="screen-quiz" class="hidden">
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="stats" id="quest-stats" style="margin-bottom:0;">Questão 1 de 80</span>
+            <span class="timer-badge hidden" id="timer-display">⏱️ 00:00</span>
+        </div>
+
+        <div style="margin-top: 8px;"><span class="tag-assunto" id="quest-assunto">Assunto</span></div>
+
+        <div id="quest-enunciado">Carregando enunciado...</div>
+        <div id="quest-options"></div>
+
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" id="btn-anterior" onclick="questaoAnterior()" disabled>Anterior</button>
+            <button class="btn btn-success" id="btn-proxima" onclick="proximaQuestao()">Próxima Questão</button>
+        </div>
+        
+        <button class="btn btn-danger" onclick="confirmarSaida()" style="margin-top: 12px; font-size: 12px; padding: 10px;">Cancelar Simulado</button>
+    </div>
+
+    <!-- TELA 3: Relatório -->
+    <div id="screen-result" class="hidden">
+        <h2 style="font-weight: 800; color: #0f172a; margin-bottom: 5px;">Resultado & Desempenho 🏆</h2>
+        <p id="res-candidato" style="font-weight: 600; color: #1e293b; margin-bottom: 2px;"></p>
+        <p id="res-tempo" class="stats" style="margin-bottom: 5px;"></p>
+        
+        <h1 id="res-nota-pct" style="color: #10b981; font-size: 46px; font-weight: 800; margin: 8px 0 0 0;">0%</h1>
+        <div id="res-ranking"></div>
+        <p id="res-acertos-erros" style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 16px;"></p>
+        
+        <h3 style="font-size: 14px; text-align: left; margin-top: 10px; color: #0f172a; font-weight: 700;">Desempenho por Tópico / Prova:</h3>
+        <div id="container-estatisticas" style="max-height: 160px; overflow-y: auto; margin-bottom: 16px;"></div>
+
+        <!-- BOTÃO MOTIVACIONAL FINAL -->
+        <button class="btn btn-motivacional" onclick="abrirMotivacionalFim()" style="margin-top: 6px; font-size: 14px;">🌟 Mensagem Final de Encorajamento</button>
+
+        <button class="btn btn-warning" onclick="alternarGabarito()">📋 Ver Gabarito Comentado em Português</button>
+        
+        <div id="container-gabarito" class="hidden" style="max-height: 260px; overflow-y: auto; margin-top: 12px;"></div>
+
+        <button class="btn btn-success" onclick="voltarHome()" style="margin-top: 16px;">NOVO SIMULADO</button>
+    </div>
+
+    <!-- TELA MOTIVACIONAL FINAL -->
+    <div id="screen-motivation-end" class="hidden">
+        <span class="tag-assunto" style="background: #fbcfe8; color: #9d174d;">🌟 MENSAGEM FINAL DE ENCORAJAMENTO</span>
+        <h2 style="color: #831843; font-size: 20px; margin-top: 5px;">Parabéns por Chegar Até Aqui!</h2>
+        
+        <div class="motivation-box">
+            <p><strong>Talvez o resultado de hoje não tenha sido exatamente o que você esperava.</strong> Talvez algumas questões de Informática tenham parecido difíceis, ou você tenha pensado, por um instante: "Isso não é para mim."</p>
+            <p style="margin-top: 8px;">Mas quero lhe fazer um convite: <strong>não transforme uma dificuldade momentânea em um limite permanente.</strong></p>
+            
+            <div class="motivation-quote">
+                "Toda pessoa aprovada em um concurso já enfrentou uma disciplina que parecia impossível. A diferença não foi a inteligência, a sorte ou um talento especial. A diferença foi a decisão de continuar, mesmo quando os resultados ainda não apareciam."
+            </div>
+
+            <p>Cada questão respondida neste aplicativo representa muito mais do que um exercício. Ela é um investimento no seu futuro, na sua estabilidade, na sua família e nos sonhos que motivaram você a iniciar essa caminhada.</p>
+            
+            <div class="motivation-quote">
+                "Não tenha medo dos erros. Eles mostram exatamente onde você pode crescer. Cada erro corrigido hoje é uma questão que você terá mais chances de acertar no dia da prova."
+            </div>
+
+            <p>Quando o desânimo aparecer, lembre-se do motivo que fez você começar. Imagine o momento em que seu nome aparecer na lista de aprovados. Imagine a emoção de compartilhar essa conquista com as pessoas que torcem por você.</p>
+
+            <p style="margin-top: 10px; font-weight: 700; text-align: center; color: #9d174d;">
+                Você é maior do que qualquer questão difícil. E lembre-se: não desista hoje da vida que você sonha viver amanhã!
+            </p>
+        </div>
+
+        <button class="btn btn-motivacional" onclick="voltarHome()" style="margin-top: 16px;">🔄 RECOMEÇAR E CONTINUAR EVOLUINDO</button>
+    </div>
+
+</div>
+
+<script>
+    let somAtivado = true;
+    let cronometroAtivo = true;
+    let timerInterval = null;
+    let tempoGastoSegundos = 0;
+    let cpfCandidato = "";
+    let audioCtx = null;
+
+    // BANCO COMPLETO DE QUESTÕES (80 QUESTÕES INFORMÁTICA AVANÇA SP - 5 BLOCOS + 3 PROVAS OFICIAIS 2025)
+    const bancoQuestoes = [
+        // BLOCO 1
+        {
+            bloco: 1, categoria: "MS Excel", assunto: "Função SOMASE",
+            enunciado: "1. No Microsoft Excel (em português), um usuário precisa somar o valor total das vendas apenas dos vendedores da região \"SUL\", que estão listados na coluna A (região) e coluna B (valor da venda). Assinale a alternativa que apresenta a fórmula CORRETA para realizar essa operação:",
+            opcoes: ["A) =SOMASE(A1:A50; \"SUL\"; B1:B50)", "B) =SOMA.SE(A1:A50 = \"SUL\"; B1:B50)", "C) =SOMAR(A1:A50; \"SUL\"; B1:B50)", "D) =CONT.SE(A1:A50; \"SUL\"; B1:B50)", "E) =SE.SOMA(A1:A50; \"SUL\"; B1:B50)"],
+            correta: 0, comentario: "Gabarito: A. A função SOMASE(intervalo_critério; critério; [intervalo_soma]) é a estrutura correta. O critério de texto precisa estar entre aspas duplas \"SUL\"."
+        },
+        {
+            bloco: 1, categoria: "MS Excel", assunto: "Referência Absoluta e Relativa",
+            enunciado: "2. Na célula C1 de uma planilha do Excel, está digitada a seguinte fórmula: =A1+$B$1. Se o usuário copiar a célula C1 (usando Ctrl+C) e colar na célula C2 (usando Ctrl+V), qual fórmula estará gravada na célula C2?",
+            opcoes: ["A) =A1+$B$1", "B) =A2+$B$2", "C) =A2+$B$1", "D) =B2+$C$1", "E) =A2+B1"],
+            correta: 2, comentario: "Gabarito: C. A referência A1 é relativa e desce para A2. A referência $B$1 é absoluta (travada pelo $) e permanece $B$1."
+        },
+        {
+            bloco: 1, categoria: "MS Excel", assunto: "Funções MÁXIMO vs. MAIOR",
+            enunciado: "3. Deseja-se encontrar o segundo maior valor localizado no intervalo de células de A1 até A10. A fórmula correta para essa finalidade no MS Excel é:",
+            opcoes: ["A) =MÁXIMO(A1:A10; 2)", "B) =MAIOR(A1:A10; 2)", "C) =SEGUNDO.MAIOR(A1:A10)", "D) =MÁXIMO.SEGUNDO(A1:A10; 2)", "E) =ORDEM.MAIOR(A1:A10; 2)"],
+            correta: 1, comentario: "Gabarito: B. A função MAIOR(intervalo; k) retorna o k-ésimo maior valor. O argumento 2 especifica a 2ª maior posição."
+        },
+        {
+            bloco: 1, categoria: "MS Excel", assunto: "Mensagens de Erro",
+            enunciado: "4. Ao digitar uma fórmula em uma célula do Excel, o usuário se depara com o código de erro #DIV/0!. Esse erro ocorre especificamente quando:",
+            opcoes: ["A) O Excel não reconhece o texto digitado no nome da função.", "B) A fórmula tenta realizar uma divisão por zero ou por uma célula vazia.", "C) O valor digitado é incompatível com o tipo de dado esperado.", "D) A largura da coluna é pequena demais para exibir o número.", "E) A referência de célula utilizada na fórmula foi excluída."],
+            correta: 1, comentario: "Gabarito: B. O erro #DIV/0! ocorre quando uma fórmula tenta dividir qualquer valor por zero ou por uma célula sem conteúdo."
+        },
+        {
+            bloco: 1, categoria: "MS Excel", assunto: "Função CONT.SE",
+            enunciado: "5. Um assistente administrativo precisa contar quantas células no intervalo de B2 a B20 possuem valores numéricos estritamente maiores do que 100. A função adequada para essa contagem condicional é:",
+            opcoes: ["A) =CONT.NÚM(B2:B20; \">100\")", "B) =CONT.VALORES(B2:B20; 100)", "C) =CONT.SE(B2:B20; \">100\")", "D) =CONTAR.MAIOR(B2:B20; 100)", "E) =SOMA.SE(B2:B20; \">100\")"],
+            correta: 2, comentario: "Gabarito: C. A função CONT.SE(intervalo; condição) é a função correta para contagem com critérios condicionais."
+        },
+        {
+            bloco: 1, categoria: "MS Excel", assunto: "Operador de Concatenação",
+            enunciado: "6. A célula A1 contém o texto \"Avança\" e a célula B1 contém o texto \"SP\". Qual fórmula deve ser inserida na célula C1 para que o resultado exibido seja exatamente \"Avança SP\" (com um espaço entre as palavras)?",
+            opcoes: ["A) =A1 + \" \" + B1", "B) =A1 & \" \" & B1", "C) =UNIR(A1; \" \"; B1)", "D) =JUNTAR(A1; \" \"; B1)", "E) =A1 AND \" \" AND B1"],
+            correta: 1, comentario: "Gabarito: B. O caractere & (e comercial) é o operador de concatenação oficial de textos no Excel."
+        },
+        {
+            bloco: 1, categoria: "MS Excel", assunto: "Teclas de Atalho",
+            enunciado: "7. No Microsoft Excel para Windows (configuração padrão em português), qual tecla de atalho deve ser pressionada enquanto se edita uma referência de célula na barra de fórmulas para alternar entre referências relativas, absolutas e mistas?",
+            opcoes: ["A) F2", "B) F4", "C) F9", "D) F11", "E) Ctrl + Shift + L"],
+            correta: 1, comentario: "Gabarito: B. A tecla F4 insere e alterna os sinais de cifrão ($) entre referências relativas e absolutas."
+        },
+        {
+            bloco: 1, categoria: "MS Excel", assunto: "Função Lógica SE",
+            enunciado: "8. Considere que na célula A1 temos o valor 7. A célula B1 contém a seguinte fórmula: =SE(A1>=9; \"Excelente\"; SE(A1>=7; \"Bom\"; \"Insuficiente\")). O resultado exibido na célula B1 será:",
+            opcoes: ["A) Excelente", "B) Bom", "C) Insuficiente", "D) #VALOR!", "E) Verdadeiro"],
+            correta: 1, comentario: "Gabarito: B. Como 7 >= 9 é FALSO, ele passa para o segundo teste SE: 7 >= 7 é VERDADEIRO, retornando 'Bom'."
+        },
+        {
+            bloco: 1, categoria: "MS Excel", assunto: "Função PROCV",
+            enunciado: "9. Na sintaxe da função =PROCV(valor_procurado; matriz_tabela; núm_índice_coluna; [procurar_intervalo]), para garantir que o Excel retorne apenas uma correspondência exata do valor procurado, o quarto argumento deve ser preenchido com:",
+            opcoes: ["A) VERDADEIRO (ou 1)", "B) FALSO (ou 0)", "C) EXATO", "D) 1 (ou Sim)", "E) NULO"],
+            correta: 1, comentario: "Gabarito: B. O parâmetro FALSO (ou 0) instrui a busca exata do elemento na matriz."
+        },
+        {
+            bloco: 1, categoria: "MS Excel", assunto: "Operadores de Comparação",
+            enunciado: "10. No Microsoft Excel, qual sinal/operador deve ser utilizado dentro de uma função ou teste lógico para indicar a condição \"Diferente de\"?",
+            opcoes: ["A) !=", "B) <>", "C) ><", "D) NOT=", "E) /="],
+            correta: 1, comentario: "Gabarito: B. O operador de diferença no Excel é representado pelos caracteres menor e maior seguidos <>."
+        },
+        {
+            bloco: 1, categoria: "MS Excel", assunto: "Função MÉDIA e Texto",
+            enunciado: "11. Considere as seguintes células em uma planilha do Excel: A1 = 10, A2 = 20, A3 = 30 e A4 = \"Ausente\" (texto). Ao inserir a fórmula =MÉDIA(A1:A4) na célula B1, qual valor será retornado?",
+            opcoes: ["A) 15", "B) 20", "C) 60", "D) #VALOR!", "E) #DIV/0!"],
+            correta: 1, comentario: "Gabarito: B. A função MÉDIA ignora células de texto. A soma dos números é 60 dividida por 3 células numéricas = 20."
+        },
+        {
+            bloco: 1, categoria: "MS Excel", assunto: "Atalho AutoSoma",
+            enunciado: "12. Qual é a combinação de teclas de atalho no MS Excel em português que insere automaticamente a função SOMA (AutoSoma) nas células selecionadas?",
+            opcoes: ["A) Ctrl + S", "B) Alt + =", "C) Ctrl + Shift + S", "D) Alt + S", "E) Shift + F3"],
+            correta: 1, comentario: "Gabarito: B. A combinação Alt + = aciona o recurso AutoSoma no Excel em português."
+        },
+
+        // BLOCO 2
+        {
+            bloco: 2, categoria: "MS Excel", assunto: "Função Lógica E",
+            enunciado: "13. No MS Excel em português, a célula A1 contém o valor 15 e a célula B1 contém o valor 25. A seguinte fórmula foi digitada na célula C1: =SE(E(A1>10; B1<20); \"Aprovado\"; \"Reprovado\"). Qual será o resultado exibido na célula C1?",
+            opcoes: ["A) Aprovado", "B) Reprovado", "C) #VALOR!", "D) VERDADEIRO", "E) 0"],
+            correta: 1, comentario: "Gabarito: B. A condição B1<20 é falsa (25 não é menor que 20). A função E exige que todas sejam verdadeiras, logo retorna 'Reprovado'."
+        },
+        {
+            bloco: 2, categoria: "MS Excel", assunto: "Congelar Painéis",
+            enunciado: "14. Ao trabalhar com uma planilha extensa, um usuário deseja manter os cabeçalhos das colunas visíveis no topo da tela enquanto rola a página para baixo. Qual guia e recurso do MS Excel em português devem ser utilizados?",
+            opcoes: ["A) Guia Página Inicial > Recurso Fixar Células", "B) Guia Exibir > Recurso Congelar Painéis", "C) Guia Dados > Recurso Travar Cabeçalho", "D) Guia Layout da Página > Recurso Manter Visível", "E) Guia Inserir > Recurso Bloquear Rolagem"],
+            correta: 1, comentario: "Gabarito: B. O recurso Congelar Painéis fica na guia Exibir (grupo Janela)."
+        },
+        {
+            bloco: 2, categoria: "MS Excel", assunto: "Tipos de Gráficos",
+            enunciado: "15. No MS Excel, quando o objetivo principal é comparar a proporção ou porcentagem de partes em relação a um todo (total de 100%), o tipo de gráfico mais recomendado é o gráfico de:",
+            opcoes: ["A) Dispersão (XY)", "B) Linhas", "C) Pizza (ou Rosca)", "D) Superfície", "E) Radar"],
+            correta: 2, comentario: "Gabarito: C. O gráfico de Pizza é o ideal para representar proporções de um todo."
+        },
+        {
+            bloco: 2, categoria: "MS Excel / LibreOffice", assunto: "Extensões de Arquivo",
+            enunciado: "16. Assinale a alternativa que apresenta, respectivamente, a extensão padrão nativa de salvamento de arquivos do Microsoft Excel moderno e do LibreOffice Calc:",
+            opcoes: ["A) .docx e .odt", "B) .xlsx e .ods", "C) .pdf e .csv", "D) .pptx e .odp", "E) .xls e .txt"],
+            correta: 1, comentario: "Gabarito: B. Excel moderno utiliza .xlsx e LibreOffice Calc utiliza .ods."
+        },
+        {
+            bloco: 2, categoria: "MS Excel", assunto: "Atalho Selecionar Tudo",
+            enunciado: "17. No MS Excel em português, caso o usuário queira selecionar todas as células da planilha ativa utilizando teclas de atalho, ele deve pressionar:",
+            opcoes: ["A) Ctrl + A (ou Ctrl + Shift + Espaço)", "B) Ctrl + T", "C) Alt + A", "D) Shift + S", "E) Ctrl + P"],
+            correta: 0, comentario: "Gabarito: A. No Excel em português, Ctrl + A (ou Ctrl + Shift + Espaço) seleciona a planilha toda."
+        },
+        {
+            bloco: 2, categoria: "MS Excel", assunto: "Função MAIÚSCULA",
+            enunciado: "18. A célula A1 do Excel contém o texto \"avança sp\". Se o usuário digitar a fórmula =MAIÚSCULA(A1), qual resultado será exibido?",
+            opcoes: ["A) Avança Sp", "B) AVANÇA SP", "C) avança sp", "D) #NOME?", "E) Avança sp"],
+            correta: 1, comentario: "Gabarito: B. A função MAIÚSCULA converte todo o texto para caracteres em maiúsculo."
+        },
+        {
+            bloco: 2, categoria: "MS Word", assunto: "Atalho Selecionar Tudo",
+            enunciado: "19. No Microsoft Word em português do Brasil, qual é a combinação de teclas de atalho utilizada para selecionar todo o conteúdo/texto do documento?",
+            opcoes: ["A) Ctrl + A", "B) Ctrl + T", "C) Ctrl + S", "D) Alt + A", "E) Shift + A"],
+            correta: 1, comentario: "Gabarito: B. Pegadinha clássica da banca! No Word em português, o atalho para selecionar Tudo é Ctrl + T (Ctrl + A serve para Abrir)."
+        },
+        {
+            bloco: 2, categoria: "MS Word", assunto: "Guias da Faixa de Opções",
+            enunciado: "20. Em qual guia da Faixa de Opções do MS Word (em português) encontram-se os botões Cabeçalho, Rodapé e Número de Página?",
+            opcoes: ["A) Guia Página Inicial", "B) Guia Design", "C) Guia Inserir", "D) Guia Layout", "E) Guia Exibir"],
+            correta: 2, comentario: "Gabarito: C. Elementos externos como Cabeçalhos, Rodapés, Tabelas e Imagens ficam na guia Inserir."
+        },
+        {
+            bloco: 2, categoria: "MS Word", assunto: "Controlar Alterações",
+            enunciado: "21. Qual guia do MS Word contém o recurso Controlar Alterações, utilizado para marcar edições e revisões de texto?",
+            opcoes: ["A) Guia Revisão", "B) Guia Correspondências", "C) Guia Exibir", "D) Guia Ferramentas", "E) Guia Referências"],
+            correta: 0, comentario: "Gabarito: A. Ferramentas de revisão de texto, correção gramatical e controle de alterações ficam na guia Revisão."
+        },
+        {
+            bloco: 2, categoria: "MS Word", assunto: "Modos de Exibição",
+            enunciado: "22. No MS Word, o modo de exibição padrão que mostra o documento exatamente como ele será impresso na folha de papel é denominado:",
+            opcoes: ["A) Estrutura de Tópicos", "B) Layout da Web", "C) Rascunho", "D) Layout de Impressão", "E) Modo de Leitura"],
+            correta: 3, comentario: "Gabarito: D. O modo padrão de visualização do Word é o Layout de Impressão."
+        },
+        {
+            bloco: 2, categoria: "MS Word", assunto: "Pincel de Formatação",
+            enunciado: "23. Caso o usuário queira aplicar a formatação copiada pelo Pincel de Formatação em vários locais diferentes de forma contínua, ele deve:",
+            opcoes: ["A) Dar um clique simples no ícone do Pincel.", "B) Dar um duplo clique no ícone do Pincel.", "C) Pressionar a tecla F4 enquanto clica no ícone.", "D) Manter a tecla Ctrl pressionada e dar um clique.", "E) Dar três cliques no texto selecionado."],
+            correta: 1, comentario: "Gabarito: B. O duplo clique no ícone do Pincel trava o recurso ativado para múltiplas aplicações."
+        },
+        {
+            bloco: 2, categoria: "MS Word", assunto: "Atalho Substituir",
+            enunciado: "24. No MS Word em português, para abrir a janela de diálogo que permite Substituir uma palavra por outra em todo o documento, utiliza-se a combinação:",
+            opcoes: ["A) Ctrl + F", "B) Ctrl + H", "C) Ctrl + L", "D) Ctrl + S", "E) Ctrl + B"],
+            correta: 1, comentario: "Gabarito: B. No Word BR, o atalho para a função Substituir é Ctrl + H."
+        },
+
+        // BLOCO 3
+        {
+            bloco: 3, categoria: "MS Word", assunto: "Quebra de Linha",
+            enunciado: "25. No Microsoft Word, para inserir apenas uma quebra de linha manual (passando para a linha de baixo dentro do mesmo parágrafo), utiliza-se:",
+            opcoes: ["A) Shift + Enter", "B) Ctrl + Enter", "C) Alt + Enter", "D) Ctrl + Shift + Enter", "E) Tab + Enter"],
+            correta: 0, comentario: "Gabarito: A. A combinação Shift + Enter insere uma quebra de linha suave mantendo o mesmo parágrafo."
+        },
+        {
+            bloco: 3, categoria: "MS Word", assunto: "Alinhamento Justificado",
+            enunciado: "26. A combinação de teclas de atalho para aplicar o alinhamento de texto Justificado no MS Word em português é:",
+            opcoes: ["A) Ctrl + E", "B) Ctrl + J", "C) Ctrl + Q", "D) Ctrl + G", "E) Ctrl + U"],
+            correta: 1, comentario: "Gabarito: B. Ctrl + J alinha o texto de forma Justificada em ambas as margens."
+        },
+        {
+            bloco: 3, categoria: "MS Word", assunto: "Listas Hierárquicas",
+            enunciado: "27. Qual botão do MS Word (grupo Parágrafo) permite criar uma lista organizada com diferentes níveis hierárquicos (ex: 1., 1.1., 1.1.1.)?",
+            opcoes: ["A) Marcadores", "B) Numeração", "C) Lista de Vários Níveis", "D) Recuo de Parágrafo", "E) Classificar"],
+            correta: 2, comentario: "Gabarito: C. O recurso Lista de Vários Níveis cria estruturas numéricas hierárquicas."
+        },
+        {
+            bloco: 3, categoria: "MS Word", assunto: "Modelos do Word",
+            enunciado: "28. A extensão padrão nativa para salvamento de um Modelo do Microsoft Word é:",
+            opcoes: ["A) .dotx", "B) .rtf", "C) .pdf", "D) .txt", "E) .xlsx"],
+            correta: 0, comentario: "Gabarito: A. A extensão de modelos de documento do Word é .dotx."
+        },
+        {
+            bloco: 3, categoria: "MS Word", assunto: "Tabelas",
+            enunciado: "29. Ao trabalhar com uma tabela no Word, selecionar duas ou mais células e transformá-las em uma única célula grande é feito através do comando:",
+            opcoes: ["A) Dividir Células", "B) Mesclar Células", "C) Agrupar Células", "D) Unir Tabela", "E) AutoAjuste"],
+            correta: 1, comentario: "Gabarito: B. Mesclar Células une duas ou mais células selecionadas em uma só."
+        },
+        {
+            bloco: 3, categoria: "Windows 10/11", assunto: "Explorador de Arquivos",
+            enunciado: "30. No Windows 10/11 em português, qual é o atalho de teclado responsável por abrir instantaneamente o Explorador de Arquivos?",
+            opcoes: ["A) Windows + E", "B) Windows + F", "C) Windows + X", "D) Windows + R", "E) Windows + I"],
+            correta: 0, comentario: "Gabarito: A. O atalho universal para o Explorador de Arquivos é Windows + E (Explorer)."
+        },
+        {
+            bloco: 3, categoria: "Windows 10/11", assunto: "Exclusão Permanente",
+            enunciado: "31. Para excluir um arquivo do disco rígido permanentemente, sem enviá-lo para a Lixeira, o usuário deve utilizar a combinação:",
+            opcoes: ["A) Ctrl + Delete", "B) Shift + Delete", "C) Alt + Delete", "D) Windows + Delete", "E) Tab + Delete"],
+            correta: 1, comentario: "Gabarito: B. A combinação Shift + Delete apaga o arquivo ignorando a Lixeira."
+        },
+        {
+            bloco: 3, categoria: "Windows 10/11", assunto: "Gerenciador de Tarefas",
+            enunciado: "32. Qual é o atalho que abre o Gerenciador de Tarefas do Windows de forma direta, sem passar por telas intermediárias de segurança?",
+            opcoes: ["A) Ctrl + Alt + Del", "B) Ctrl + Shift + Esc", "C) Alt + F4", "D) Windows + Tab", "E) Ctrl + Alt + Esc"],
+            correta: 1, comentario: "Gabarito: B. Ctrl + Shift + Esc abre diretamente o Gerenciador de Tarefas."
+        },
+        {
+            bloco: 3, categoria: "Windows 10/11", assunto: "Bloqueio de Tela",
+            enunciado: "33. O atalho de teclado para bloquear a tela do Windows instantaneamente e retornar à tela de login é:",
+            opcoes: ["A) Windows + L", "B) Windows + B", "C) Windows + D", "D) Windows + K", "E) Windows + P"],
+            correta: 0, comentario: "Gabarito: A. O atalho Windows + L bloqueia a estação de trabalho (Lock)."
+        },
+        {
+            bloco: 3, categoria: "Windows 10/11", assunto: "Captura de Tela",
+            enunciado: "34. Para abrir a ferramenta nativa de captura e recorte de tela no Windows 10 e 11, utiliza-se a combinação:",
+            opcoes: ["A) Windows + Shift + S", "B) Windows + Print Screen", "C) Alt + Print Screen", "D) Ctrl + Shift + P", "E) Windows + Alt + R"],
+            correta: 0, comentario: "Gabarito: A. Windows + Shift + S aciona a ferramenta de captura/recorte do Windows."
+        },
+        {
+            bloco: 3, categoria: "Windows 10/11", assunto: "Área de Trabalho",
+            enunciado: "35. Para minimizar todas as janelas de uma só vez e visualizar a Área de Trabalho (Desktop), utiliza-se o atalho:",
+            opcoes: ["A) Windows + D", "B) Windows + M", "C) Windows + A", "D) Windows + Tab", "E) Alt + Tab"],
+            correta: 0, comentario: "Gabarito: A. Windows + D alterna a exibição do Desktop."
+        },
+        {
+            bloco: 3, categoria: "Windows 10/11", assunto: "Classificação no Explorador",
+            enunciado: "36. No Explorador de Arquivos, a opção que permite ordenar a exibição por nome, tamanho ou data de modificação fica disponível na guia:",
+            opcoes: ["A) Exibir > Classificar por", "B) Ferramentas > Organizar", "C) Editar > Ordenar", "D) Início > Filtrar", "E) Arquivo > Configurar"],
+            correta: 0, comentario: "Gabarito: A. A ordenação por nome/data/tamanho fica na guia Exibir."
+        },
+
+        // BLOCO 4
+        {
+            bloco: 4, categoria: "Windows 10/11", assunto: "Painel Configurações",
+            enunciado: "37. O painel centralizado Configurações do Windows 10 e 11 pode ser aberto diretamente através da combinação:",
+            opcoes: ["A) Windows + I", "B) Windows + C", "C) Windows + S", "D) Windows + U", "E) Windows + P"],
+            correta: 0, comentario: "Gabarito: A. Windows + I abre o aplicativo Configurações do sistema."
+        },
+        {
+            bloco: 4, categoria: "Windows 10/11", assunto: "Mídias Removíveis",
+            enunciado: "38. Ao selecionar e apagar um arquivo armazenado em um Pen Drive (mídia removível USB) pressionando a tecla Delete, o Windows:",
+            opcoes: ["A) Envia o arquivo para a Lixeira local.", "B) Exclui o arquivo permanentemente, sem passar pela Lixeira.", "C) Move o arquivo para o OneDrive.", "D) Apenas oculta o arquivo.", "E) Compacta o arquivo."],
+            correta: 1, comentario: "Gabarito: B. Arquivos deletados em discos removíveis são apagados diretamente sem passar pela Lixeira."
+        },
+        {
+            bloco: 4, categoria: "Windows 10/11", assunto: "Criar Nova Pasta",
+            enunciado: "39. No Explorador de Arquivos do Windows, o atalho de teclado para criar uma Nova Pasta é:",
+            opcoes: ["A) Ctrl + Shift + N", "B) Ctrl + N", "C) Alt + N", "D) Shift + N", "E) Ctrl + Alt + N"],
+            correta: 0, comentario: "Gabarito: A. Ctrl + Shift + N é o atalho oficial para criar uma nova pasta."
+        },
+        {
+            bloco: 4, categoria: "Windows 10/11", assunto: "Renomear Item",
+            enunciado: "40. A tecla de função que ativa o modo de edição para Renomear um arquivo ou pasta selecionado no Windows é:",
+            opcoes: ["A) F1", "B) F2", "C) F3", "D) F5", "E) F8"],
+            correta: 1, comentario: "Gabarito: B. A tecla F2 é o atalho universal para renomear itens selecionados."
+        },
+        {
+            bloco: 4, categoria: "Navegadores", assunto: "Navegação Anônima",
+            enunciado: "41. Ao utilizar o modo de Navegação Anônima nos navegadores web, o sistema NÃO salva no computador local:",
+            opcoes: ["A) Os arquivos baixados durante a sessão.", "B) Os novos favoritos criados.", "C) O histórico de navegação, cookies e dados de formulários.", "D) Alterações nas configurações do navegador.", "E) O endereço IP público."],
+            correta: 2, comentario: "Gabarito: C. A navegação anônima descarta o histórico, cookies e dados de formulários digitados após o fechamento."
+        },
+        {
+            bloco: 4, categoria: "Navegadores", assunto: "Abrir Nova Guia",
+            enunciado: "42. Nos navegadores Chrome, Edge e Firefox, qual combinação de teclas abre uma nova guia (aba) de navegação?",
+            opcoes: ["A) Ctrl + T", "B) Ctrl + N", "C) Ctrl + W", "D) Ctrl + Shift + T", "E) Ctrl + J"],
+            correta: 0, comentario: "Gabarito: A. Ctrl + T (Tab) abre uma nova guia no navegador."
+        },
+        {
+            bloco: 4, categoria: "Navegadores", assunto: "Reabrir Guia Fechada",
+            enunciado: "43. Para reabrir a última guia que foi fechada acidentalmente no navegador, utiliza-se o atalho:",
+            opcoes: ["A) Ctrl + Z", "B) Ctrl + Shift + T", "C) Ctrl + Shift + N", "D) Alt + Z", "E) Ctrl + H"],
+            correta: 1, comentario: "Gabarito: B. Ctrl + Shift + T restaura as últimas guias fechadas em ordem cronológica reversa."
+        },
+        {
+            bloco: 4, categoria: "Navegadores", assunto: "Histórico de Downloads",
+            enunciado: "44. Nos navegadores Google Chrome e Microsoft Edge, para abrir a página de Downloads utiliza-se o atalho:",
+            opcoes: ["A) Ctrl + D", "B) Ctrl + J", "C) Ctrl + H", "D) Ctrl + Shift + D", "E) Alt + J"],
+            correta: 1, comentario: "Gabarito: B. Ctrl + J abre o gerenciador/histórico de Downloads."
+        },
+        {
+            bloco: 4, categoria: "Internet & Segurança", assunto: "Protocolo HTTPS",
+            enunciado: "45. Ao acessar um site cujo endereço inicia com https:// acompanhado por um ícone de cadeado, indica-se que a comunicação é protegida por:",
+            opcoes: ["A) Criptografia de dados.", "B) Bloqueador de anúncios.", "C) Conexão VPN pública.", "D) Antivírus no código HTML.", "E) Dobro de velocidade."],
+            correta: 0, comentario: "Gabarito: A. O protocolo HTTPS estabelece um canal de comunicação protegido por criptografia."
+        },
+        {
+            bloco: 4, categoria: "Navegadores", assunto: "Conceito de Cookies",
+            enunciado: "46. No contexto da navegação web, o termo Cookie refere-se a:",
+            opcoes: ["A) Um vírus que rouba a senha do BIOS.", "B) Um pequeno arquivo de texto armazenado no computador para gravar preferências e dados de sessão.", "C) Um acelerador de banda larga.", "D) Um protocolo de envio de e-mails.", "E) Um backup de disco rígido na nuvem."],
+            correta: 1, comentario: "Gabarito: B. Cookies são arquivos de texto salvos pelo site no navegador para manter sessões e preferências."
+        },
+        {
+            bloco: 4, categoria: "Navegadores", assunto: "Favoritos",
+            enunciado: "47. Para salvar a página web atual na barra de Favoritos do navegador, a combinação de atalho é:",
+            opcoes: ["A) Ctrl + D", "B) Ctrl + F", "C) Ctrl + B", "D) Alt + D", "E) Ctrl + Shift + F"],
+            correta: 0, comentario: "Gabarito: A. Ctrl + D adiciona a página ativa aos Favoritos."
+        },
+        {
+            bloco: 4, categoria: "Internet & Busca", assunto: "Pesquisa no Google",
+            enunciado: "48. Ao realizar uma busca no Google, utilizar aspas duplas (ex: \"Avança SP informática\") serve para:",
+            opcoes: ["A) Pesquisar apenas sites governamentais.", "B) Buscar exatamente a frase informada na mesma ordem.", "C) Excluir o termo da busca.", "D) Traduzir para o inglês.", "E) Filtrar apenas arquivos em PDF."],
+            correta: 1, comentario: "Gabarito: B. Aspas duplas forçam o motor de busca a localizar a correspondência exata da expressão."
+        },
+
+        // BLOCO 5
+        {
+            bloco: 5, categoria: "Correio Eletrônico", assunto: "Campo Cco",
+            enunciado: "49. Para enviar um e-mail a múltiplos destinatários sem que eles vejam os endereços uns dos outros, deve-se usar o campo:",
+            opcoes: ["A) Para", "B) Cc (Com Cópia)", "C) Cco (Cópia Oculta)", "D) Assunto", "E) Responder a"],
+            correta: 2, comentario: "Gabarito: C. O campo Cco (Cópia Oculta) oculta os e-mails dos demais recebedores."
+        },
+        {
+            bloco: 5, categoria: "Correio Eletrônico", assunto: "Protocolos SMTP e IMAP",
+            enunciado: "50. Assinale a alternativa com os protocolos responsáveis, respectivamente, pelo ENVIO de e-mails e pela SINCRONIZAÇÃO entre múltiplos dispositivos:",
+            opcoes: ["A) POP3 e SMTP", "B) SMTP e IMAP", "C) IMAP e POP3", "D) HTTP e FTP", "E) SMTP e POP3"],
+            correta: 1, comentario: "Gabarito: B. SMTP envia as mensagens e o IMAP sincroniza o correio em tempo real no servidor."
+        },
+        {
+            bloco: 5, categoria: "Segurança da Informação", assunto: "Phishing",
+            enunciado: "51. O ataque de engenharia social que utiliza e-mails falsos com aparente identidade visual de instituições conhecidas para capturar senhas é o:",
+            opcoes: ["A) Ransomware", "B) Phishing", "C) Botnet", "D) Defacement", "E) Screenlogger"],
+            correta: 1, comentario: "Gabarito: B. Phishing é a fraude baseada em iscas para enganar o usuário e roubar dados pessoais."
+        },
+        {
+            bloco: 5, categoria: "Segurança da Informação", assunto: "Ransomware",
+            enunciado: "52. Qual malware criptografa os arquivos do usuário e exige o pagamento de um resgate para liberação do acesso aos dados?",
+            opcoes: ["A) Spyware", "B) Worm", "C) Ransomware", "D) Adware", "E) Rootkit"],
+            correta: 2, comentario: "Gabarito: C. O Ransomware é o vírus sequestrador de dados que exige pagamento de resgate."
+        },
+        {
+            bloco: 5, categoria: "Segurança da Informação", assunto: "Firewall",
+            enunciado: "53. O componente que atua filtrando o tráfego de dados entre uma rede interna privada e a internet com base em regras de segurança é o:",
+            opcoes: ["A) Antivírus", "B) Firewall", "C) Anti-Spyware", "D) Modem", "E) Hub"],
+            correta: 1, comentario: "Gabarito: B. O Firewall é a barreira de proteção de rede que filtra tráfego de dados."
+        },
+        {
+            bloco: 5, categoria: "Segurança da Informação", assunto: "Boas Práticas de Backup",
+            enunciado: "54. Em relação às boas práticas de realização de Backup, é CORRETO afirmar:",
+            opcoes: ["A) Deve ser mantido no mesmo disco rígido dos arquivos originais.", "B) Elimina a necessidade de ter antivírus.", "C) Deve ser armazenado em mídias ou nuvem independentes da máquina original.", "D) Só pode ser restaurado uma vez por ano.", "E) Não aceita arquivos .zip."],
+            correta: 2, comentario: "Gabarito: C. O backup seguro exige o armazenamento das cópias em locais isolados do sistema de origem."
+        },
+        {
+            bloco: 5, categoria: "Segurança da Informação", assunto: "Trojan (Cavalo de Tróia)",
+            enunciado: "55. Um programa malicioso que se finge de aplicativo útil (como protetor de tela), mas abre portas para invasões em segundo plano é um:",
+            opcoes: ["A) Trojan (Cavalo de Tróia)", "B) Vírus de Macro", "C) Worm", "D) Firewall", "E) Keylogger"],
+            correta: 0, comentario: "Gabarito: A. O Trojan se disfarça de programa inofensivo para abrir brechas no sistema."
+        },
+        {
+            bloco: 5, categoria: "Segurança da Informação", assunto: "Autenticação em Dois Fatores",
+            enunciado: "56. A Autenticação em Dois Fatores (2FA) reforça a segurança combinando tipicamente:",
+            opcoes: ["A) Duas senhas de texto digitadas em sequência.", "B) Algo que você sabe (senha) e algo que você possui (código no celular).", "C) Abertura obrigatoria de dois navegadores.", "D) CPF e RG no mesmo campo.", "E) IP público e nome do provedor."],
+            correta: 1, comentario: "Gabarito: B. A 2FA combina fatores distintos: conhecimento (senha) + posse (dispositivo/token)."
+        },
+        {
+            bloco: 5, categoria: "Correio Eletrônico", assunto: "Responder a Todos",
+            enunciado: "57. Para responder um e-mail enviando mensagem tanto para o remetente quanto para os contatos que estavam em cópia (Cc), utiliza-se:",
+            opcoes: ["A) Responder", "B) Responder a Todos", "C) Encaminhar", "D) Mover para Rascunhos", "E) Marcar como Não Lida"],
+            correta: 1, comentario: "Gabarito: B. O comando Responder a Todos responde ao remetente original e a todos os copiados no e-mail."
+        },
+        {
+            bloco: 5, categoria: "Segurança da Informação", assunto: "Keylogger",
+            enunciado: "58. O código malicioso que registra todas as teclas digitadas pelo usuário no teclado físico para capturar senhas é o:",
+            opcoes: ["A) Ransomware", "B) Keylogger", "C) Worm", "D) Firewall", "E) Adware"],
+            correta: 1, comentario: "Gabarito: B. O Keylogger é o malware focado em capturar digitações no teclado."
+        },
+        {
+            bloco: 5, categoria: "Correio Eletrônico", assunto: "Anexos Bloqueados",
+            enunciado: "59. Qual extensão de arquivo é comumente bloqueada automaticamente pelos serviços de e-mail por ser um arquivo executável?",
+            opcoes: ["A) .pdf", "B) .docx", "C) .exe", "D) .png", "E) .xlsx"],
+            correta: 2, comentario: "Gabarito: C. Arquivos executáveis .exe são bloqueados por conterem alto risco de infecção."
+        },
+        {
+            bloco: 5, categoria: "Segurança da Informação", assunto: "Princípio da Integridade",
+            enunciado: "60. O princípio da segurança que garante que a informação não foi alterada ou adulterada de forma não autorizada é a:",
+            opcoes: ["A) Confidencialidade", "B) Integridade", "C) Disponibilidade", "D) Autenticidade", "E) Não Repúdio"],
+            correta: 1, comentario: "Gabarito: B. A Integridade garante a exatidão e preservação dos dados contra alterações."
+        },
+
+        // PROVA OFICIAL 01: CÂMARA DE VINHEDO (2025) - QUESTÕES 16 A 20
+        {
+            bloco: "oficial1", categoria: "Prova Oficial 2025 - Câmara Vinhedo", assunto: "Questão 16 - Atalho de Captura Windows",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Câmara Vinhedo - Q16]\nNo Windows 10 e 11, qual combinação de teclas ativa instantaneamente a ferramenta nativa de captura para selecionar uma área da tela?",
+            opcoes: ["A) Windows + Shift + S", "B) Windows + Print Screen", "C) Alt + Print Screen", "D) Ctrl + Shift + P", "E) Windows + Alt + S"],
+            correta: 0, comentario: "Gabarito: A. A combinação Windows + Shift + S é o atalho oficial para a ferramenta de recorte/captura no Windows 10 e 11."
+        },
+        {
+            bloco: "oficial1", categoria: "Prova Oficial 2025 - Câmara Vinhedo", assunto: "Questão 17 - MS Word (Seleção)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Câmara Vinhedo - Q17]\nNo Microsoft Word em português do Brasil, a tecla de atalho utilizada para selecionar TODO o conteúdo de um documento é:",
+            opcoes: ["A) Ctrl + A", "B) Ctrl + T", "C) Ctrl + S", "D) Alt + A", "E) Shift + T"],
+            correta: 1, comentario: "Gabarito: B. Na versão em português do Word, a tecla de atalho para selecionar Todo o texto é Ctrl + T (Ctrl + A abre a tela de Arquivo/Abrir)."
+        },
+        {
+            bloco: "oficial1", categoria: "Prova Oficial 2025 - Câmara Vinhedo", assunto: "Questão 18 - MS Excel (SOMASE)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Câmara Vinhedo - Q18]\nEm uma planilha do MS Excel, para somar os valores contidos no intervalo B1:B10 apenas se o valor correspondente na coluna A1:A10 for maior que 100, utiliza-se a fórmula:",
+            opcoes: ["A) =SOMASE(A1:A10; \">100\"; B1:B10)", "B) =SOMA(A1:A10; \">100\"; B1:B10)", "C) =CONT.SE(A1:A10; \">100\"; B1:B10)", "D) =SOMAR.SE(A1:A10; 100; B1:B10)", "E) =SE.SOMA(A1:A10; \">100\"; B1:B10)"],
+            correta: 0, comentario: "Gabarito: A. A sintaxe correta da função condicional de soma no Excel é =SOMASE(intervalo_critério; critério; intervalo_soma)."
+        },
+        {
+            bloco: "oficial1", categoria: "Prova Oficial 2025 - Câmara Vinhedo", assunto: "Questão 19 - Correio Eletrônico (Protocolos)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Câmara Vinhedo - Q19]\nQual protocolo é responsável exclusivamente pelo envio (saída) de mensagens de correio eletrônico entre clientes e servidores de e-mail?",
+            opcoes: ["A) POP3", "B) IMAP", "C) SMTP", "D) HTTP", "E) FTP"],
+            correta: 2, comentario: "Gabarito: C. O protocolo SMTP (Simple Mail Transfer Protocol) é o protocolo padrão responsável pelo envio e transporte de e-mails de saída."
+        },
+        {
+            bloco: "oficial1", categoria: "Prova Oficial 2025 - Câmara Vinhedo", assunto: "Questão 20 - Segurança (Phishing)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Câmara Vinhedo - Q20]\nUm e-mail fraudulento que simula a identidade visual de uma instituição bancária para enganar o usuário e levá-lo a informar senhas personalizadas é um ataque de:",
+            opcoes: ["A) Ransomware", "B) Phishing", "C) Trojan", "D) Keylogger", "E) Firewall"],
+            correta: 1, comentario: "Gabarito: B. O Phishing é a técnica de engenharia social que lança 'iscas' falsas para roubar dados confidenciais de usuários."
+        },
+
+        // PROVA OFICIAL 02: PREFEITURA DE VINHEDO (2025) - QUESTÕES 31 A 40
+        {
+            bloco: "oficial2", categoria: "Prova Oficial 2025 - Pref. Vinhedo", assunto: "Questão 31 - Windows (Exclusão Permanente)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Prefeitura Vinhedo - Q31]\nNo Windows 10, para excluir definitivamente um arquivo do disco local sem enviá-lo para a Lixeira do sistema, deve-se selecionar o arquivo e pressionar:",
+            opcoes: ["A) Ctrl + Delete", "B) Shift + Delete", "C) Alt + Delete", "D) Windows + Delete", "E) Tab + Delete"],
+            correta: 1, comentario: "Gabarito: B. O atalho Shift + Delete contorna a Lixeira e efetua a exclusão definitiva do arquivo."
+        },
+        {
+            bloco: "oficial2", categoria: "Prova Oficial 2025 - Pref. Vinhedo", assunto: "Questão 32 - Windows (Gerenciador de Tarefas)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Prefeitura Vinhedo - Q32]\nQual atalho de teclado abre diretamente o Gerenciador de Tarefas do Windows, sem exibir a tela intermediária de opções do sistema?",
+            opcoes: ["A) Ctrl + Alt + Del", "B) Ctrl + Shift + Esc", "C) Alt + F4", "D) Windows + Tab", "E) Ctrl + Alt + Esc"],
+            correta: 1, comentario: "Gabarito: B. O atalho Ctrl + Shift + Esc chama o Gerenciador de Tarefas diretamente na tela."
+        },
+        {
+            bloco: "oficial2", categoria: "Prova Oficial 2025 - Pref. Vinhedo", assunto: "Questão 33 - MS Word (Quebra de Página)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Prefeitura Vinhedo - Q33]\nNo Microsoft Word em português, a combinação de teclas de atalho responsável por inserir uma Quebra de Página manual é:",
+            opcoes: ["A) Shift + Enter", "B) Ctrl + Enter", "C) Alt + Enter", "D) Ctrl + Shift + Enter", "E) Tab + Enter"],
+            correta: 1, comentario: "Gabarito: B. A combinação Ctrl + Enter insere uma Quebra de Página manual no cursor do Word."
+        },
+        {
+            bloco: "oficial2", categoria: "Prova Oficial 2025 - Pref. Vinhedo", assunto: "Questão 34 - MS Word (Substituição)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Prefeitura Vinhedo - Q34]\nNo MS Word em português, qual atalho abre a caixa de diálogo para Localizar e Substituir um texto por outro?",
+            opcoes: ["A) Ctrl + F", "B) Ctrl + H", "C) Ctrl + L", "D) Ctrl + S", "E) Ctrl + B"],
+            correta: 1, comentario: "Gabarito: B. O atalho Ctrl + H aciona a janela de diálogo para Substituir termos no documento."
+        },
+        {
+            bloco: "oficial2", categoria: "Prova Oficial 2025 - Pref. Vinhedo", assunto: "Questão 35 - MS Excel (Referências)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Prefeitura Vinhedo - Q35]\nNa célula C1 do Excel, temos a fórmula =A1+$B$1. Ao copiar a célula C1 e colá-la na célula C2, a fórmula gravada em C2 será:",
+            opcoes: ["A) =A1+$B$1", "B) =A2+$B$2", "C) =A2+$B$1", "D) =B2+$C$1", "E) =A2+B1"],
+            correta: 2, comentario: "Gabarito: C. A célula A1 é relativa e vira A2 ao descer uma linha. O termo $B$1 é absoluto (travado) e permanece $B$1."
+        },
+        {
+            bloco: "oficial2", categoria: "Prova Oficial 2025 - Pref. Vinhedo", assunto: "Questão 36 - MS Excel (Erro de Divisão)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Prefeitura Vinhedo - Q36]\nO código de erro exibido em uma célula do Excel quando uma fórmula tenta dividir um número por zero ou por uma célula vazia é:",
+            opcoes: ["A) #NOME?", "B) #DIV/0!", "C) #VALOR!", "D) #REF!", "E) #####"],
+            correta: 1, comentario: "Gabarito: B. O erro #DIV/0! indica tentativa matemática de divisão por zero ou célula sem valor numérico."
+        },
+        {
+            bloco: "oficial2", categoria: "Prova Oficial 2025 - Pref. Vinhedo", assunto: "Questão 37 - Navegadores (Restaurar Guia)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Prefeitura Vinhedo - Q37]\nNos navegadores Chrome e Edge, qual atalho de teclado permite reabrir a última guia que foi fechada acidentalmente?",
+            opcoes: ["A) Ctrl + Z", "B) Ctrl + Shift + T", "C) Ctrl + Shift + N", "D) Alt + Z", "E) Ctrl + H"],
+            correta: 1, comentario: "Gabarito: B. A combinação Ctrl + Shift + T restaura as últimas abas/guias fechadas no navegador."
+        },
+        {
+            bloco: "oficial2", categoria: "Prova Oficial 2025 - Pref. Vinhedo", assunto: "Questão 38 - Navegadores (Navegação Anônima)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Prefeitura Vinhedo - Q38]\nAo navegar na internet através de uma Janela Anônima (Google Chrome), o navegador se assegura de NÃO salvar localmente:",
+            opcoes: ["A) Os arquivos baixados (downloads).", "B) Os novos favoritos salvos.", "C) O histórico de navegação e os cookies da sessão.", "D) Alterações nas preferências do sistema.", "E) O endereço de IP da placa de rede."],
+            correta: 2, comentario: "Gabarito: C. O modo de navegação anônima limpa o histórico, cookies e dados de formulários ao encerrar a janela."
+        },
+        {
+            bloco: "oficial2", categoria: "Prova Oficial 2025 - Pref. Vinhedo", assunto: "Questão 39 - Segurança (Ransomware)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Prefeitura Vinhedo - Q39]\nO tipo de malware que infecta a máquina, criptografa o conteúdo do disco rígido e exige pagamento em moedas digitais para fornecer o código de resgate é o:",
+            opcoes: ["A) Spyware", "B) Worm", "C) Ransomware", "D) Adware", "E) Rootkit"],
+            correta: 2, comentario: "Gabarito: C. Ransomware é o software malicioso sequestrador de dados mediante criptografia e cobrança de resgate."
+        },
+        {
+            bloco: "oficial2", categoria: "Prova Oficial 2025 - Pref. Vinhedo", assunto: "Questão 40 - Segurança (Firewall)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Prefeitura Vinhedo - Q40]\nQual ferramenta de segurança serve como barreira entre uma rede interna confiável e uma rede externa (internet), filtrando o tráfego de dados autorizados?",
+            opcoes: ["A) Antivírus", "B) Firewall", "C) Anti-Spyware", "D) Modem", "E) Hub"],
+            correta: 1, comentario: "Gabarito: B. O Firewall é a ferramenta que aplica regras para permitir ou bloquear o tráfego de conexões em redes."
+        },
+
+        // PROVA OFICIAL 03: PREFEITURA DE POTIM/SP (2025) - QUESTÕES 16 A 20
+        {
+            bloco: "oficial3", categoria: "Prova Oficial 2025 - Potim/SP", assunto: "Questão 16 - Windows (Explorador)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Prefeitura Potim/SP - Q16]\nNo sistema operacional Windows 10 em português, o atalho de teclado utilizado para abrir a janela do Explorador de Arquivos é:",
+            opcoes: ["A) Windows + E", "B) Windows + F", "C) Windows + X", "D) Windows + R", "E) Windows + I"],
+            correta: 0, comentario: "Gabarito: A. O atalho de teclado Windows + E aciona diretamente o Explorador de Arquivos (File Explorer)."
+        },
+        {
+            bloco: "oficial3", categoria: "Prova Oficial 2025 - Potim/SP", assunto: "Questão 17 - MS Word (Pincel de Formatação)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Prefeitura Potim/SP - Q17]\nPara aplicar a formatação copiada pelo Pincel de Formatação do Word em vários locais distintos continuamente, o usuário deve dar:",
+            opcoes: ["A) Um clique simples no ícone do Pincel.", "B) Um duplo clique no ícone do Pincel.", "C) Três cliques no texto selecionado.", "D) Um clique segurando a tecla Alt.", "E) Um clique segurando a tecla Shift."],
+            correta: 1, comentario: "Gabarito: B. O duplo clique sobre o botão do Pincel de Formatação trava o recurso para ser aplicado repetidas vezes."
+        },
+        {
+            bloco: "oficial3", categoria: "Prova Oficial 2025 - Potim/SP", assunto: "Questão 18 - MS Excel (Concatenação)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Prefeitura Potim/SP - Q18]\nEm uma planilha do MS Excel, se a célula A1 contém \"Potim\" e a célula B1 contém \"SP\", qual fórmula retorna exatamente \"Potim SP\" na célula C1?",
+            opcoes: ["A) =A1 + \" \" + B1", "B) =A1 & \" \" & B1", "C) =UNIR(A1; \" \"; B1)", "D) =JUNTAR(A1; \" \"; B1)", "E) =A1 AND \" \" AND B1"],
+            correta: 1, comentario: "Gabarito: B. O caractere & (e comercial) é o operador de junção/concatenação de textos em fórmulas do Excel."
+        },
+        {
+            bloco: "oficial3", categoria: "Prova Oficial 2025 - Potim/SP", assunto: "Questão 19 - Internet (HTTPS)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Prefeitura Potim/SP - Q19]\nA presença do protocolo HTTPS e do ícone de cadeado na barra de endereços de um site indica que a conexão entre o navegador e a página é protegida por:",
+            opcoes: ["A) Criptografia de dados.", "B) Bloqueador de propagandas.", "C) Antivírus local.", "D) Conexão via VPN paga.", "E) Duplicação de velocidade."],
+            correta: 0, comentario: "Gabarito: A. HTTPS garante uma camada de segurança usando certificados digitais e criptografia de ponta a ponta."
+        },
+        {
+            bloco: "oficial3", categoria: "Prova Oficial 2025 - Potim/SP", assunto: "Questão 20 - Correio Eletrônico (Campo Cco)",
+            enunciado: "[Prova Oficial Avança SP - 2025 - Prefeitura Potim/SP - Q20]\nAo enviar uma mensagem de e-mail institucional para múltiplos contatos preservando o sigilo dos e-mails dos destinatários, deve-se usar o campo:",
+            opcoes: ["A) Para", "B) Cc (Com Cópia)", "C) Cco (Cópia Oculta)", "D) Assunto", "E) Responder a"],
+            correta: 2, comentario: "Gabarito: C. O campo Cco (Cópia Oculta) não permite que os destinatários vejam os endereços de e-mail uns dos outros."
+        }
+    ];
+
+    let questoesAtuais = [];
+    let respostasUsuario = [];
+    let indiceAtual = 0;
+
+    // MÁSCARA E VALIDADOR DE CPF
+    function mascaraCPF(input) {
+        let value = input.value.replace(/\D/g, "");
+        if (value.length > 11) value = value.slice(0, 11);
+        
+        value = value.replace(/(\d{3})(\d)/, "$1.$2");
+        value = value.replace(/(\d{3})(\d)/, "$1.$2");
+        value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+        
+        input.value = value;
+    }
+
+    function validarCPF(cpf) {
+        cpf = cpf.replace(/[^\d]+/g, '');
+        if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+        
+        let soma = 0;
+        let resto;
+        for (let i = 1; i <= 9; i++) {
+            soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+        }
+        resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        if (resto !== parseInt(cpf.substring(9, 10))) return false;
+        
+        soma = 0;
+        for (let i = 1; i <= 10; i++) {
+            soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+        }
+        resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        if (resto !== parseInt(cpf.substring(10, 11))) return false;
+        
+        return true;
+    }
+
+    function alternarSom() {
+        somAtivado = !somAtivado;
+        document.getElementById('btn-sound').innerText = somAtivado ? "🔊 Som: ATIVADO" : "🔇 Som: DESATIVADO";
+    }
+
+    function alternarCronometro() {
+        cronometroAtivo = !cronometroAtivo;
+        document.getElementById('btn-timer-toggle').innerText = cronometroAtivo ? "⏱️ Cronômetro: ATIVADO" : "⏱️ Cronômetro: DESATIVADO";
+    }
+
+    // SISTEMA DE EFEITOS SONOROS WEB AUDIO API (SINTETIZADOS - ESTILO DUOLINGO)
+    function tocarSom(tipo) {
+        if (!somAtivado) return;
+        try {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const now = audioCtx.currentTime;
+
+            if (tipo === 'select') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.04);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.04);
+            } 
+            else if (tipo === 'acerto') {
+                const notes = [659.25, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    gain.gain.setValueAtTime(0.12, now + idx * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.2);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.2);
+                });
+            } 
+            else if (tipo === 'erro') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(110, now + 0.25);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+            else if (tipo === 'vitoria') {
+                const arpeggio = [523.25, 659.25, 783.99, 1046.50];
+                arpeggio.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+                    gain.gain.setValueAtTime(0.12, now + idx * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + idx * 0.1);
+                    osc.stop(now + idx * 0.1 + 0.3);
+                });
+            }
+        } catch (e) {}
+    }
+
+    function abrirMotivacionalInicio() {
+        tocarSom('select');
+        document.getElementById('screen-home').classList.add('hidden');
+        document.getElementById('screen-motivation-start').classList.remove('hidden');
+    }
+
+    function abrirMotivacionalFim() {
+        tocarSom('select');
+        document.getElementById('screen-result').classList.add('hidden');
+        document.getElementById('screen-motivation-end').classList.remove('hidden');
+    }
+
+    function iniciarModulo(numBloco) {
+        let cpfInput = document.getElementById('candidato-cpf').value.trim();
+        
+        if (!validarCPF(cpfInput)) {
+            tocarSom('erro');
+            alert("Por favor, digite um número de CPF válido para acessar o simulado!");
+            return;
+        }
+
+        tocarSom('select');
+        cpfCandidato = cpfInput;
+
+        if (numBloco === 'completo') {
+            questoesAtuais = [...bancoQuestoes];
+        } else {
+            questoesAtuais = bancoQuestoes.filter(q => q.bloco === numBloco);
+        }
+
+        indiceAtual = 0;
+        respostasUsuario = new Array(questoesAtuais.length).fill(null);
+        tempoGastoSegundos = 0;
+
+        document.getElementById('screen-home').classList.add('hidden');
+        document.getElementById('screen-quiz').classList.remove('hidden');
+
+        if (cronometroAtivo) {
+            document.getElementById('timer-display').classList.remove('hidden');
+            iniciarTimer();
+        } else {
+            document.getElementById('timer-display').classList.add('hidden');
+        }
+
+        carregarQuestao();
+    }
+
+    function iniciarTimer() {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            tempoGastoSegundos++;
+            let min = Math.floor(tempoGastoSegundos / 60).toString().padStart(2, '0');
+            let seg = (tempoGastoSegundos % 60).toString().padStart(2, '0');
+            document.getElementById('timer-display').innerText = `⏱️ ${min}:${seg}`;
+        }, 1000);
+    }
+
+    function carregarQuestao() {
+        let q = questoesAtuais[indiceAtual];
+        let pct = ((indiceAtual + 1) / questoesAtuais.length) * 100;
+        
+        document.getElementById('progress-bar').style.width = pct + '%';
+        document.getElementById('quest-stats').innerText = `Questão ${indiceAtual + 1} de ${questoesAtuais.length} (${pct.toFixed(0)}%)`;
+        document.getElementById('quest-assunto').innerText = `${q.categoria} | ${q.assunto}`;
+        
+        const elemEnunciado = document.getElementById('quest-enunciado');
+        elemEnunciado.innerText = q.enunciado;
+        elemEnunciado.classList.remove('pop-anim');
+        void elemEnunciado.offsetWidth;
+        elemEnunciado.classList.add('pop-anim');
+
+        let htmlOpcoes = '';
+        q.opcoes.forEach((opt, idx) => {
+            let selecionada = respostasUsuario[indiceAtual] === idx ? 'selected' : '';
+            htmlOpcoes += `<div class="option ${selecionada}" onclick="selecionarOpcao(${idx})">${opt}</div>`;
+        });
+        document.getElementById('quest-options').innerHTML = htmlOpcoes;
+
+        document.getElementById('btn-anterior').disabled = (indiceAtual === 0);
+        
+        if (indiceAtual === questoesAtuais.length - 1) {
+            document.getElementById('btn-proxima').innerText = "FINALIZAR SIMULADO";
+            document.getElementById('btn-proxima').className = "btn btn-danger";
+        } else {
+            document.getElementById('btn-proxima').innerText = "Próxima Questão";
+            document.getElementById('btn-proxima').className = "btn btn-success";
+        }
+    }
+
+    function selecionarOpcao(idx) {
+        tocarSom('select');
+        respostasUsuario[indiceAtual] = idx;
+        carregarQuestao();
+    }
+
+    function questaoAnterior() {
+        if (indiceAtual > 0) {
+            tocarSom('select');
+            indiceAtual--;
+            carregarQuestao();
+        }
+    }
+
+    function proximaQuestao() {
+        if (respostasUsuario[indiceAtual] === null) {
+            tocarSom('erro');
+            const boxOptions = document.getElementById('quest-options');
+            boxOptions.classList.remove('shake-anim');
+            void boxOptions.offsetWidth;
+            boxOptions.classList.add('shake-anim');
+            alert("Por favor, selecione uma alternativa antes de prosseguir.");
+            return;
+        }
+
+        if (indiceAtual < questoesAtuais.length - 1) {
+            tocarSom('select');
+            indiceAtual++;
+            carregarQuestao();
+        } else {
+            finalizarSimulado();
+        }
+    }
+
+    function confirmarSaida() {
+        tocarSom('select');
+        if (confirm("Tem certeza que deseja cancelar o simulado? Seu progresso atual será perdido.")) {
+            clearInterval(timerInterval);
+            voltarHome();
+        }
+    }
+
+    function finalizarSimulado() {
+        clearInterval(timerInterval);
+
+        let acertos = 0;
+        let estatisticasCategoria = {};
+
+        questoesAtuais.forEach((q, i) => {
+            let resp = respostasUsuario[i];
+            let acertou = (resp === q.correta);
+            if (acertou) acertos++;
+
+            let cat = q.categoria;
+            if (!estatisticasCategoria[cat]) {
+                estatisticasCategoria[cat] = { total: 0, acertos: 0 };
+            }
+            estatisticasCategoria[cat].total++;
+            if (acertou) estatisticasCategoria[cat].acertos++;
+        });
+
+        let totalQ = questoesAtuais.length;
+        let erros = totalQ - acertos;
+        let pctFinal = ((acertos / totalQ) * 100).toFixed(1);
+
+        document.getElementById('screen-quiz').classList.add('hidden');
+        document.getElementById('screen-result').classList.remove('hidden');
+
+        document.getElementById('res-candidato').innerText = `CPF do Candidato: ${cpfCandidato}`;
+        document.getElementById('res-nota-pct').innerText = `${pctFinal}%`;
+        document.getElementById('res-acertos-erros').innerText = `Acertos: ${acertos} | Erros: ${erros} (Total: ${totalQ} questões)`;
+
+        if (cronometroAtivo) {
+            let min = Math.floor(tempoGastoSegundos / 60);
+            let seg = tempoGastoSegundos % 60;
+            document.getElementById('res-tempo').innerText = `⏱️ Tempo total gasto: ${min} min e ${seg} seg`;
+        } else {
+            document.getElementById('res-tempo').innerText = '';
+        }
+
+        let rankBadge = document.getElementById('res-ranking');
+        if (pctFinal >= 80) {
+            tocarSom('vitoria');
+            rankBadge.innerHTML = `<span class="badge-rank" style="background:#10b981;">🏆 Nível: EXCELENTE (PRONTO PARA A PROVA)</span>`;
+        } else if (pctFinal >= 65) {
+            tocarSom('acerto');
+            rankBadge.innerHTML = `<span class="badge-rank" style="background:#2563eb;">🥇 Nível: BOM (ALTO DESEMPENHO)</span>`;
+        } else if (pctFinal >= 50) {
+            tocarSom('erro');
+            rankBadge.innerHTML = `<span class="badge-rank" style="background:#f59e0b;">🥈 Nível: REGULAR (NECESSITA REVISÃO)</span>`;
+        } else {
+            tocarSom('erro');
+            rankBadge.innerHTML = `<span class="badge-rank" style="background:#ef4444;">⚠️ Nível: INSUFICIENTE (REFAZER OS BLOCOS)</span>`;
+        }
+
+        let htmlStats = "";
+        for (let cat in estatisticasCategoria) {
+            let item = estatisticasCategoria[cat];
+            let p = ((item.acertos / item.total) * 100).toFixed(0);
+            let cor = p >= 70 ? '#10b981' : (p >= 50 ? '#f59e0b' : '#ef4444');
+            htmlStats += `
+                <div class="stat-card">
+                    <strong>${cat}</strong>
+                    <div style="display:flex; justify-content:space-between; margin-top:2px;">
+                        <span>Acertos: ${item.acertos}/${item.total} (${p}%)</span>
+                    </div>
+                    <div style="background:#e2e8f0; height:6px; border-radius:3px; margin-top:4px; overflow:hidden;">
+                        <div style="width:${p}%; background:${cor}; height:100%;"></div>
+                    </div>
+                </div>
+            `;
+        }
+        document.getElementById('container-estatisticas').innerHTML = htmlStats;
+
+        gerarCorrecaoComentada();
+    }
+
+    function gerarCorrecaoComentada() {
+        let htmlGabarito = "";
+        questoesAtuais.forEach((q, i) => {
+            let respUsuario = respostasUsuario[i];
+            let acertou = (respUsuario === q.correta);
+            let statusCor = acertou ? '#059669' : '#dc2626';
+            let statusTexto = acertou ? 'ACERTOU' : 'ERROU';
+
+            let respUsuarioTexto = respUsuario !== null ? q.opcoes[respUsuario] : 'Não respondida';
+            let respCorretaTexto = q.opcoes[q.correta];
+
+            htmlGabarito += `
+                <div class="correcao-card">
+                    <div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:4px;">
+                        <span>Q${i+1}. ${q.categoria} - ${q.assunto}</span>
+                        <span style="color:${statusCor}; font-weight:800;">${statusTexto}</span>
+                    </div>
+                    <p style="margin:4px 0;"><strong>Sua resposta:</strong> ${respUsuarioTexto}</p>
+                    <p style="margin:4px 0; color:#059669;"><strong>Resposta correta:</strong> ${respCorretaTexto}</p>
+                    <p style="margin:4px 0; color:#475569;"><strong>💡 Justificativa:</strong> ${q.comentario}</p>
+                </div>
+            `;
+        });
+        document.getElementById('container-gabarito').innerHTML = htmlGabarito;
+    }
+
+    function alternarGabarito() {
+        tocarSom('select');
+        let box = document.getElementById('container-gabarito');
+        box.classList.toggle('hidden');
+    }
+
+    function voltarHome() {
+        tocarSom('select');
+        document.getElementById('screen-home').classList.remove('hidden');
+        document.getElementById('screen-quiz').classList.add('hidden');
+        document.getElementById('screen-result').classList.add('hidden');
+        document.getElementById('screen-motivation-start').classList.add('hidden');
+        document.getElementById('screen-motivation-end').classList.add('hidden');
+        document.getElementById('container-gabarito').classList.add('hidden');
+    }
+
+    // REGISTRO AUTOMÁTICO DO SERVICE WORKER (PWA)
+    window.addEventListener('load', () => {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('PWA Service Worker registrado com sucesso! Scope:', reg.scope))
+                .catch(err => console.log('Falha ao registrar PWA Service Worker:', err));
+        }
+    });
+</script>
+
+</body>
+</html>
